@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Ampla Distribuidora</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="produtos.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html" style="display: block;">
+                        <svg class="logo-svg" viewBox="0 0 240 70" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 15 18 Q 60 8, 120 12 Q 180 16, 225 18" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="40" cy="14" r="3.5" fill="white"/>
+                            <text x="120" y="42" font-family="'Inter', 'Arial', sans-serif" font-size="36" font-weight="bold" fill="white" text-anchor="middle" letter-spacing="1">AMPLA</text>
+                            <text x="120" y="60" font-family="'Inter', 'Arial', sans-serif" font-size="11" font-weight="300" fill="white" text-anchor="middle" letter-spacing="0.5">Distribuidora</text>
+                        </svg>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <a href="index.html#sobre">Sobre Nós</a>
+                    <a href="index.html#produtos">Produtos</a>
+                    <a href="index.html#servicos">Serviços</a>
+                    <a href="index.html#blog">Blog</a>
+                </nav>
+                <button class="btn-primary btn-header">Solicitar Orçamento</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb">
+        <div class="container">
+            <a href="index.html" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current" id="breadcrumb-category">Produtos</span>
+        </div>
+    </section>
+
+    <!-- Product Category Header -->
+    <section class="product-category-header">
+        <div class="container">
+            <div class="category-header-content">
+                <span class="category-tag" id="category-tag">Estrutural</span>
+                <h1 class="category-title" id="category-title">Blocos e Cimento</h1>
+                <p class="category-description" id="category-description">
+                    Materiais estruturais de alta resistência para fundações e alvenaria. 
+                    Oferecemos as melhores marcas do mercado com garantia de qualidade.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-detail">
+        <div class="container">
+            <!-- Barra de Pesquisa -->
+            <div class="search-bar-container">
+                <div class="search-bar-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        class="search-input" 
+                        placeholder="Pesquisar produtos, marcas ou especificações..."
+                        autocomplete="off"
+                    >
+                    <button type="button" class="search-clear" id="search-clear" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-results-info" id="search-results-info" style="display: none;">
+                    <span id="search-count">0</span> produto(s) encontrado(s)
+                </div>
+            </div>
+
+            <div class="products-filter">
+                <div class="filter-group">
+                    <label id="filter-label">Filtrar por:</label>
+                    <select id="filter-brand" class="filter-select">
+                        <option value="all">Todas as Marcas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Ordenar por:</label>
+                    <select id="filter-sort" class="filter-select">
+                        <option value="name">Nome</option>
+                        <option value="price-asc">Menor Preço</option>
+                        <option value="price-desc">Maior Preço</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="products-detail-grid" id="products-grid">
+                <!-- Produtos serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="products-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Precisa de ajuda para escolher?</h2>
+                <p>Nossa equipe técnica está pronta para orientá-lo na escolha dos melhores materiais para seu projeto.</p>
+                <div class="cta-buttons">
+                    <button class="btn-primary">
+                        Falar com Especialista <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="btn-secondary">
+                        Solicitar Orçamento <i class="fas fa-file-invoice"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <svg class="logo-svg logo-footer" viewBox="0 0 240 70" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 15 18 Q 60 8, 120 12 Q 180 16, 225 18" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="40" cy="14" r="3.5" fill="white"/>
+                            <text x="120" y="42" font-family="'Inter', 'Arial', sans-serif" font-size="36" font-weight="bold" fill="white" text-anchor="middle" letter-spacing="1">AMPLA</text>
+                            <text x="120" y="60" font-family="'Inter', 'Arial', sans-serif" font-size="11" font-weight="300" fill="white" text-anchor="middle" letter-spacing="0.5">Distribuidora</text>
+                        </svg>
+                    </div>
+                    <p class="footer-description">
+                        Materiais de construção civil de alta qualidade para profissionais e construtoras.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#sobre">Sobre Nós</a></li>
+                        <li><a href="index.html#produtos">Produtos</a></li>
+                        <li><a href="index.html#servicos">Serviços</a></li>
+                        <li><a href="index.html#blog">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Contato</h4>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-phone"></i> (11) 3456-7890</li>
+                        <li><i class="fab fa-whatsapp"></i> (11) 99999-8888</li>
+                        <li><i class="fas fa-envelope"></i> contato@ampla.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Ampla. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão Flutuante de Redes Sociais -->
+    <div class="social-float">
+        <div class="social-balloon">
+            <div class="social-icon-main">
+                <i class="fas fa-share-alt"></i>
+            </div>
+            <div class="social-menu">
+                <a href="https://wa.me/5591992090338" target="_blank" class="social-item whatsapp" title="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="https://www.instagram.com/ampla.distribuidora" target="_blank" class="social-item instagram" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+                <a href="https://www.facebook.com/ampla.distribuidora" target="_blank" class="social-item facebook" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="produtos.js"></script>
+</body>
+</html>
+
