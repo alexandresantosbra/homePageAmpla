@@ -61,6 +61,11 @@ body {
     width: auto;
 }
 
+.logo-img {
+    height: 50px;
+    width: auto;
+}
+
 .logo-footer {
     height: 60px;
     width: auto;
