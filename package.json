@@ -1,0 +1,14 @@
+{
+  "name": "ampla-distribuidora",
+  "version": "1.0.0",
+  "description": "Homepage da Ampla Distribuidora - Materiais de Construção",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
