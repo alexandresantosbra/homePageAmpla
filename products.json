@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Cimento Portland CP II-E-32",
+    "brand": "Votorantim",
+    "price": 28.90,
+    "image": "https://images.unsplash.com/photo-1504307651254-35680f053423?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "blocos-cimento"
+  },
+  {
+    "name": "Bloco de Concreto 14x19x39cm",
+    "brand": "Tigre",
+    "price": 2.85,
+    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "blocos-cimento"
+  },
+  {
+    "name": "Barra de Aço CA-50 12.5mm",
+    "brand": "Gerdau",
+    "price": 45.90,
+    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "aco-ferro"
+  },
+  {
+    "name": "Chapa de Gesso 15mm",
+    "brand": "Knauf",
+    "price": 28.90,
+    "image": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "drywall-perfis"
+  },
+  {
+    "name": "Pedra São Tomé",
+    "brand": "Natural Stone",
+    "price": 85.00,
+    "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "pedras-naturais"
+  },
+  {
+    "name": "Manilha de Concreto 60cm",
+    "brand": "Tigre",
+    "price": 185.00,
+    "image": "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "tubos-manilhas"
+  },
+  {
+    "name": "Concreto Arquitetônico",
+    "brand": "Votorantim",
+    "price": 450.00,
+    "image": "https://images.unsplash.com/photo-1504307651254-35680f053423?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "concreto-especial"
+  },
+  {
+    "name": "Tubo PVC 100mm",
+    "brand": "Tigre",
+    "price": 45.90,
+    "image": "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "tubos-manilhas"
+  },
+  {
+    "name": "Bloco Cerâmico 9x19x19cm",
+    "brand": "Cerâmica São Paulo",
+    "price": 0.85,
+    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "blocos-cimento"
+  },
+  {
+    "name": "Perfil I 6\"",
+    "brand": "ArcelorMittal",
+    "price": 125.00,
+    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "aco-ferro"
+  },
+  {
+    "name": "Tubo PVC 150mm",
+    "brand": "Tigre",
+    "price": 95.00,
+    "image": "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "tubos-manilhas"
+  },
+  {
+    "name": "Argamassa Colante AC III",
+    "brand": "Votomassa",
+    "price": 18.50,
+    "image": "https://images.unsplash.com/photo-1504307651254-35680f053423?w=400&h=300&fit=crop&q=80",
+    "categoryKey": "blocos-cimento"
+  }
+]

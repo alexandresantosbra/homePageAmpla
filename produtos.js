@@ -235,6 +235,128 @@ function getUrlParameter(name) {
 // Variável global para armazenar todos os produtos (para busca)
 let allProductsGlobal = [];
 
+// ======= Favoritos - Funções (definidas antes de renderProducts) =======
+function getFavorites() {
+    try {
+        const raw = localStorage.getItem('ampla_favorites');
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        console.error('Erro ao carregar favoritos', e);
+        return [];
+    }
+}
+
+function saveFavorites(favorites) {
+    try {
+        localStorage.setItem('ampla_favorites', JSON.stringify(favorites));
+        // Atualizar contador de favoritos
+        if (typeof updateFavoritesCount === 'function') {
+            updateFavoritesCount();
+        } else if (window.updateFavoritesCount) {
+            window.updateFavoritesCount();
+        }
+    } catch (e) {
+        console.error('Erro ao salvar favoritos', e);
+    }
+}
+
+function isProductFavorite(productName, categoryKey = '') {
+    const favorites = getFavorites();
+    return favorites.some(f => 
+        f.name === productName && (categoryKey ? f.categoryKey === categoryKey : true)
+    );
+}
+
+function addToFavorites(productName, categoryKey = '') {
+    // Buscar produto completo
+    let product = allProductsGlobal.find(p => 
+        p.name === productName && (categoryKey ? p.categoryKey === categoryKey : true)
+    );
+
+    // Se não encontrar, procurar em produtosData
+    if (!product) {
+        for (const key of Object.keys(produtosData)) {
+            const p = produtosData[key].products.find(item => item.name === productName);
+            if (p) {
+                product = { ...p, categoryKey: key, category: produtosData[key].title };
+                break;
+            }
+        }
+    }
+
+    if (!product) {
+        console.warn('Produto não encontrado para adicionar aos favoritos:', productName);
+        return false;
+    }
+
+    const favorites = getFavorites();
+    const exists = favorites.some(f => 
+        f.name === productName && (categoryKey ? f.categoryKey === categoryKey : true)
+    );
+
+    if (!exists) {
+        favorites.push({
+            name: product.name,
+            brand: product.brand,
+            price: product.price,
+            image: product.image,
+            specs: product.specs || [],
+            categoryKey: product.categoryKey || '',
+            category: product.category || ''
+        });
+        saveFavorites(favorites);
+        return true;
+    }
+    return false;
+}
+
+function removeFromFavorites(productName, categoryKey = '') {
+    const favorites = getFavorites();
+    const filtered = favorites.filter(f => 
+        !(f.name === productName && (categoryKey ? f.categoryKey === categoryKey : true))
+    );
+    saveFavorites(filtered);
+    return filtered.length !== favorites.length;
+}
+
+function toggleFavorite(productName, categoryKey = '') {
+    const isFavorite = isProductFavorite(productName, categoryKey);
+    
+    if (isFavorite) {
+        removeFromFavorites(productName, categoryKey);
+        if (window.showToast) {
+            showToast('Produto removido dos favoritos', { success: true });
+        }
+    } else {
+        addToFavorites(productName, categoryKey);
+        if (window.showToast) {
+            showToast('Produto adicionado aos favoritos', { success: true });
+        }
+    }
+    
+    // Atualizar visual do botão
+    const button = event.target.closest('.btn-product-favorite');
+    if (button) {
+        if (isFavorite) {
+            button.classList.remove('active');
+            button.setAttribute('data-tooltip', 'Adicionar aos Favoritos');
+        } else {
+            button.classList.add('active');
+            button.setAttribute('data-tooltip', 'Remover dos Favoritos');
+        }
+    }
+    
+    // Recarregar produtos para atualizar todos os botões
+    setTimeout(() => {
+        const catalogo = getUrlParameter('catalogo');
+        if (catalogo === 'completo') {
+            filterFullCatalog();
+        } else {
+            filterProducts();
+        }
+    }, 100);
+}
+
 // Função para renderizar produtos
 function renderProducts(products) {
     const grid = document.getElementById('products-grid');
@@ -272,14 +394,17 @@ function renderProducts(products) {
                     <span> / unidade</span>
                 </div>
                 <div class="product-detail-actions">
-                    <button class="btn-product btn-product-add" onclick="addToCart('${product.name}','${product.categoryKey || ''}')" data-tooltip="Adicionar ao Carrinho" aria-label="Adicionar ao carrinho">
+                    <button class="btn-product btn-product-favorite ${isProductFavorite(product.name, product.categoryKey || '') ? 'active' : ''}" 
+                            onclick="toggleFavorite('${product.name.replace(/'/g, "\\'")}','${product.categoryKey || ''}')" 
+                            data-tooltip="${isProductFavorite(product.name, product.categoryKey || '') ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}" 
+                            aria-label="Favoritar produto">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn-product btn-product-add" onclick="addToCart('${product.name.replace(/'/g, "\\'")}','${product.categoryKey || ''}')" data-tooltip="Adicionar ao Carrinho" aria-label="Adicionar ao carrinho">
                         <i class="fas fa-cart-plus"></i>
                     </button>
-                    <button class="btn-product btn-product-primary" onclick="solicitarOrcamento('${product.name}')">
-                        <i class="fas fa-shopping-cart"></i> Solicitar
-                    </button>
-                    <button class="btn-product btn-product-secondary" onclick="verDetalhes('${product.name}')">
-                        <i class="fas fa-info-circle"></i> Detalhes
+                    <button class="btn-product btn-product-primary" onclick="solicitarOrcamento('${product.name.replace(/'/g, "\\'")}')">
+                        <i class="fas fa-shopping-cart"></i> Comprar
                     </button>
                 </div>
             </div>
@@ -705,14 +830,17 @@ function createProductCard(product) {
                 <span> / unidade</span>
             </div>
             <div class="product-detail-actions">
-                <button class="btn-product btn-product-add" onclick="addToCart('${product.name}','${product.categoryKey || ''}')" data-tooltip="Adicionar ao Carrinho" aria-label="Adicionar ao carrinho">
+                <button class="btn-product btn-product-favorite ${isProductFavorite(product.name, product.categoryKey || '') ? 'active' : ''}" 
+                        onclick="toggleFavorite('${product.name.replace(/'/g, "\\'")}','${product.categoryKey || ''}')" 
+                        data-tooltip="${isProductFavorite(product.name, product.categoryKey || '') ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}" 
+                        aria-label="Favoritar produto">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button class="btn-product btn-product-add" onclick="addToCart('${product.name.replace(/'/g, "\\'")}','${product.categoryKey || ''}')" data-tooltip="Adicionar ao Carrinho" aria-label="Adicionar ao carrinho">
                     <i class="fas fa-cart-plus"></i>
                 </button>
-                <button class="btn-product btn-product-primary" onclick="solicitarOrcamento('${product.name}')">
-                    <i class="fas fa-shopping-cart"></i> Solicitar
-                </button>
-                <button class="btn-product btn-product-secondary" onclick="verDetalhes('${product.name}')">
-                    <i class="fas fa-info-circle"></i> Detalhes
+                <button class="btn-product btn-product-primary" onclick="solicitarOrcamento('${product.name.replace(/'/g, "\\'")}')">
+                    <i class="fas fa-shopping-cart"></i> Comprar
                 </button>
             </div>
         </div>
@@ -756,12 +884,11 @@ function filterFullCatalog() {
 
 // Funções auxiliares
 function solicitarOrcamento(productName) {
-    alert(`Orçamento solicitado para: ${productName}\n\nEm breve entraremos em contato!`);
+    // Redirecionar para página de pagamento/carrinho com auto-abertura do modal
+    window.location.href = 'cart.html?autoPay=1';
 }
 
-function verDetalhes(productName) {
-    alert(`Detalhes do produto: ${productName}\n\nInformações completas em breve!`);
-}
+// Função verDetalhes removida: botão de detalhes não é exibido no catálogo.
 
 // ======= Carrinho - armazenamento em localStorage =======
 function getCart() {
@@ -821,9 +948,9 @@ function addToCart(name, categoryKey = '') {
     // Feedback não bloqueante
     const count = cart.reduce((s, it) => s + (it.qty || 0), 0);
     if (window.showToast) {
-        showToast(`${product.name} adicionado ao carrinho. Itens: ${count}`, { success: true });
+        showToast(`${product.name} salvo nos produtos. Itens: ${count}`, { success: true });
     } else {
-        alert(`${product.name} adicionado ao carrinho. Itens no carrinho: ${count}`);
+        alert(`${product.name} salvo nos produtos. Itens no carrinho: ${count}`);
     }
 }
 
@@ -834,11 +961,28 @@ function updateCartCount() {
     els.forEach(el => el.textContent = count);
 }
 
-// Atualizar contador ao carregar a página
+// Atualizar contadores ao carregar a página
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
+    if (typeof updateFavoritesCount === 'function') {
+        updateFavoritesCount();
+    } else if (window.updateFavoritesCount) {
+        window.updateFavoritesCount();
+    }
 });
 
 // Carregar quando a página estiver pronta
 document.addEventListener('DOMContentLoaded', loadCategory);
+
+// Expor funções usadas por handlers inline em HTML (quando o script é carregado como module)
+if (typeof window !== 'undefined') {
+    window.addToCart = addToCart;
+    window.solicitarOrcamento = solicitarOrcamento;
+    window.updateCartCount = updateCartCount;
+    window.toggleFavorite = toggleFavorite;
+    window.isProductFavorite = isProductFavorite;
+    window.getFavorites = getFavorites;
+    window.addToFavorites = addToFavorites;
+    window.removeFromFavorites = removeFromFavorites;
+}
 

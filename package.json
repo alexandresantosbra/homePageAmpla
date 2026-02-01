@@ -10,5 +10,10 @@
   },
   "devDependencies": {
     "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "express": "^5.2.1",
+    "node-fetch": "^2.7.0"
   }
 }

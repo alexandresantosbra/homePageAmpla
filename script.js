@@ -81,6 +81,21 @@ const observer = new IntersectionObserver(function(entries) {
     });
 }, observerOptions);
 
+// Função para atualizar contador de favoritos
+function updateFavoritesCount() {
+    try {
+        const raw = localStorage.getItem('ampla_favorites');
+        const favorites = raw ? JSON.parse(raw) : [];
+        const count = favorites.length;
+        const favoritesCountEl = document.getElementById('favorites-count');
+        if (favoritesCountEl) {
+            favoritesCountEl.textContent = count;
+        }
+    } catch (e) {
+        console.warn('Erro ao atualizar contador de favoritos', e);
+    }
+}
+
 // Aplicar animação aos cards
 document.addEventListener('DOMContentLoaded', function() {
     const animatedElements = document.querySelectorAll('.product-card, .service-card, .feature-item, .benefit-item');
@@ -90,12 +105,18 @@ document.addEventListener('DOMContentLoaded', function() {
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         observer.observe(el);
     });
+    
+    // Atualizar contadores
+    updateFavoritesCount();
+    
+    // Atualizar contador de favoritos periodicamente (para sincronizar entre abas)
+    setInterval(updateFavoritesCount, 2000);
 });
 
 // Botões de call-to-action
 document.querySelectorAll('.btn-primary, .btn-secondary, .btn-outline').forEach(button => {
     button.addEventListener('click', function(e) {
-        if (this.textContent.includes('Orçamento') || this.textContent.includes('Solicitar')) {
+        if (this.textContent.includes('Orçamento') || this.textContent.includes('Solicitar') || this.textContent.includes('Comprar')) {
             e.preventDefault();
             const quoteSection = document.querySelector('.quote-section');
             if (quoteSection) {

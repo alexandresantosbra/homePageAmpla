@@ -19,15 +19,21 @@
                     <img src="/public/logo_original.png" alt="Ampla Distribuidora" class="logo-img">
                 </div>
                 <nav class="nav">
+                    <a href="index.html">Home</a>
                     <a href="#sobre">Sobre Nós</a>
                     <a href="#produtos">Produtos</a>
                     <a href="#servicos">Serviços</a>
-                    <a href="#blog">Blog</a>
                 </nav>
-                <a href="cart.html" class="cart-link header-cart" title="Carrinho">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count">0</span>
-                </a>
+                <div class="header-actions">
+                    <a href="favoritos.html" class="cart-link header-favorites" title="Favoritos">
+                        <i class="fas fa-heart"></i>
+                        <span id="favorites-count">0</span>
+                    </a>
+                    <a href="cart.html" class="cart-link header-cart" title="Carrinho">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count">0</span>
+                    </a>
+                </div>
                 <button class="btn-primary btn-header">Solicitar Orçamento</button>
             </div>
         </div>
@@ -50,6 +56,9 @@
                         </button>
                         <button class="btn-secondary">
                             <i class="fas fa-th"></i> Ver Nossos Produtos
+                        </button>
+                        <button class="btn-secondary" onclick="simulatePurchase(true)" title="Adicionar itens de teste e finalizar">
+                            <i class="fas fa-bolt"></i> Simular Compra e Finalizar
                         </button>
                     </div>
                     <div class="hero-stats">
@@ -420,10 +429,10 @@
                 <div class="footer-section">
                     <h4 class="footer-title">Links Rápidos</h4>
                     <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
                         <li><a href="#sobre">Sobre Nós</a></li>
                         <li><a href="#produtos">Produtos</a></li>
                         <li><a href="#servicos">Serviços</a></li>
-                        <li><a href="#blog">Blog</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -436,7 +445,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Ampla. Todos os direitos reservados.</p>
+                <p>&copy; 2025 Ampla. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
@@ -444,21 +453,31 @@
     <!-- Botão Flutuante de Redes Sociais -->
     <div class="social-float">
         <div class="social-balloon">
-            <div class="social-icon-main">
+            <button class="social-icon-main" aria-label="Redes Sociais">
                 <i class="fas fa-share-alt"></i>
-            </div>
+                <span class="social-pulse"></span>
+            </button>
             <div class="social-menu">
                 <a href="https://wa.me/5591992090338" target="_blank" class="social-item whatsapp" title="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>WhatsApp</span>
+                    <div class="social-icon-wrapper">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <span class="social-label">WhatsApp</span>
+                    <div class="social-ripple"></div>
                 </a>
                 <a href="https://www.instagram.com/ampla.distribuidora" target="_blank" class="social-item instagram" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                    <span>Instagram</span>
+                    <div class="social-icon-wrapper">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <span class="social-label">Instagram</span>
+                    <div class="social-ripple"></div>
                 </a>
                 <a href="https://www.facebook.com/ampla.distribuidora" target="_blank" class="social-item facebook" title="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                    <span>Facebook</span>
+                    <div class="social-icon-wrapper">
+                        <i class="fab fa-facebook-f"></i>
+                    </div>
+                    <span class="social-label">Facebook</span>
+                    <div class="social-ripple"></div>
                 </a>
             </div>
         </div>
@@ -466,6 +485,7 @@
 
     <script type="module" src="script.js"></script>
     <script src="toast.js"></script>
+    <script src="test-helper.js"></script>
 </body>
 </html>
 

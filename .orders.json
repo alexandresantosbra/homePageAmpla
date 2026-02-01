@@ -1,0 +1,82 @@
+{
+  "pay_1767012957880": {
+    "id": "pay_1767012957880",
+    "payload": {
+      "transaction_amount": 86.7,
+      "description": "Compra Ampla - 2 itens",
+      "payment_method_id": "pix",
+      "payer": {
+        "email": "curso1002alex@gmail.com",
+        "first_name": "Alexandre",
+        "last_name": "Corrêa dos Santos",
+        "identification": {
+          "type": "CPF",
+          "number": "00564260207"
+        }
+      },
+      "expiration": 3600
+    },
+    "status": "pending",
+    "createdAt": "2025-12-29T12:55:57.880Z"
+  },
+  "pay_1767013020066": {
+    "id": "pay_1767013020066",
+    "payload": {
+      "transaction_amount": 396.7,
+      "description": "Compra Ampla - 4 itens",
+      "payment_method_id": "pix",
+      "payer": {
+        "email": "curso1002alex@gmail.com",
+        "first_name": "Alexandre",
+        "last_name": "Corrêa dos Santos",
+        "identification": {
+          "type": "CPF",
+          "number": "00564260207"
+        }
+      },
+      "expiration": 3600
+    },
+    "status": "pending",
+    "createdAt": "2025-12-29T12:57:00.066Z"
+  },
+  "pay_1767013259133": {
+    "id": "pay_1767013259133",
+    "payload": {
+      "transaction_amount": 45.9,
+      "description": "Compra Ampla - 1 itens",
+      "payment_method_id": "pix",
+      "payer": {
+        "email": "curso1002alex@gmail.com",
+        "first_name": "Alexandre",
+        "last_name": "Corrêa dos Santos",
+        "identification": {
+          "type": "CPF",
+          "number": "00564260207"
+        }
+      },
+      "expiration": 3600
+    },
+    "status": "pending",
+    "createdAt": "2025-12-29T13:00:59.133Z"
+  },
+  "pay_1767013387962": {
+    "id": "pay_1767013387962",
+    "payload": {
+      "transaction_amount": 74.8,
+      "description": "Compra Ampla - 2 itens",
+      "payment_method_id": "pix",
+      "payer": {
+        "email": "curso1002alex@gmail.com",
+        "first_name": "Alexandre",
+        "last_name": "Corrêa dos Santos",
+        "identification": {
+          "type": "CPF",
+          "number": "00564260207"
+        }
+      },
+      "expiration": 3600
+    },
+    "status": "pending",
+    "createdAt": "2025-12-29T13:03:07.962Z"
+  }
+}

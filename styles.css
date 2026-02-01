@@ -87,18 +87,43 @@ body {
     color: var(--orange);
 }
 
-/* Carrinho (contador no cabeçalho) */
-.header .header-cart {
+/* Ações do Header (Favoritos e Carrinho) */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 16px;
+}
+
+.header .header-cart,
+.header .header-favorites {
     color: var(--white);
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-left: 16px;
     text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 8px;
 }
 
-.header .header-cart i { font-size: 18px; }
-.header .header-cart span {
+.header .header-cart:hover,
+.header .header-favorites:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.header .header-favorites.active {
+    background: rgba(233, 30, 99, 0.2);
+}
+
+.header .header-cart i,
+.header .header-favorites i {
+    font-size: 18px;
+}
+
+.header .header-cart span,
+.header .header-favorites span {
     background: var(--orange);
     color: var(--white);
     padding: 4px 8px;
@@ -106,6 +131,11 @@ body {
     font-weight: 700;
     min-width: 26px;
     text-align: center;
+    font-size: 12px;
+}
+
+.header .header-favorites span {
+    background: #e91e63;
 }
 
 /* Toasts */
@@ -198,6 +228,37 @@ body {
 .btn-white:hover {
     background: var(--white);
     color: var(--blue-dark);
+}
+
+/* Estilos específicos para os cards de recomendados (carrinho) */
+.product-card-recommend {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-card-recommend .product-detail-image {
+    height: 120px;
+    object-fit: cover;
+}
+
+.product-card-recommend .btn-outline,
+.product-card-recommend .btn-primary {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    font-weight: 600;
+    gap: 6px;
+    height: auto;
+    align-items: center;
+}
+
+.product-card-recommend .btn-outline {
+    border-width: 1.5px;
+}
+
+.product-card-recommend .btn-primary {
+    padding: 6px 10px;
 }
 
 /* Hero Section */
@@ -1018,6 +1079,60 @@ body {
     padding: 60px 0 30px;
 }
 
+/* Evita que o rodapé cubra o conteúdo do carrinho em telas menores */
+.cart-page main.container {
+    padding-bottom: 40px; /* reduzir espaço para liberar mais área visível */
+}
+
+/* Esconder totalmente o rodapé na página do carrinho para maximizar visibilidade */
+.cart-page .footer {
+    display: none !important;
+}
+
+/* Ajuste do botão flutuante caso exista na cart page */
+.cart-page .social-float {
+    bottom: 20px;
+}
+
+/* Ajustes do resumo do carrinho e botões na página do carrinho */
+.cart-page #cart-summary {
+    margin-top: 40px !important; /* empurra os botões mais pra baixo */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cart-page #cart-summary > div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-page #clear-cart,
+.cart-page #checkout {
+    padding: 10px 18px;
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    .cart-page #cart-summary > div { width: auto; }
+}
+
+@media (max-width: 480px) {
+    .cart-page #clear-cart, .cart-page #checkout {
+        width: 100%;
+        margin: 6px 0;
+    }
+    .cart-page #cart-summary {
+        margin-top: 30px !important;
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
 .footer-content {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1152,7 +1267,7 @@ body {
     }
 }
 
-/* Botão Flutuante de Redes Sociais */
+/* Botão Flutuante de Redes Sociais - Design Moderno */
 .social-float {
     position: fixed;
     bottom: 100px;
@@ -1164,122 +1279,84 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.2));
-    transition: filter 0.3s ease;
 }
 
-.social-balloon:hover {
-    filter: drop-shadow(0 8px 30px rgba(30, 58, 95, 0.4));
-}
-
-/* Garantir que o menu fique visível quando hover no balão ou menu */
-.social-balloon:hover .social-menu,
-.social-menu:hover {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(-50%) translateX(0) !important;
-    pointer-events: all !important;
-}
-
+/* Botão Principal */
 .social-icon-main {
-    width: 60px;
-    height: 60px;
-    background: var(--blue-dark);
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--white);
-    font-size: 24px;
+    font-size: 22px;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4),
+                0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
-    z-index: 2;
-    animation: float 3s ease-in-out infinite;
+    z-index: 10;
+    overflow: visible;
+    animation: floatGentle 3s ease-in-out infinite;
 }
 
-.social-icon-main::before {
-    content: '';
+.social-pulse {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: var(--blue-dark);
-    opacity: 0;
-    animation: pulse 2s ease-out infinite;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 0.6;
+    animation: pulseModern 2s ease-out infinite;
     z-index: -1;
 }
 
-.social-icon-main::after {
-    content: 'Redes Sociais';
-    position: absolute;
-    right: 75px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--blue-dark);
-    color: var(--white);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.social-icon-main:hover::after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) translateX(-10px);
-}
-
 .social-icon-main:hover {
-    background: var(--blue-primary);
-    transform: scale(1.15) rotate(360deg);
-    box-shadow: 0 8px 30px rgba(30, 58, 95, 0.5);
-    animation: none;
+    transform: scale(1.1) rotate(180deg);
+    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5),
+                0 8px 16px rgba(118, 75, 162, 0.3);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
-.social-icon-main:hover::before {
-    animation: pulse-hover 0.6s ease-out;
+.social-icon-main:hover .social-pulse {
+    animation: pulseHover 0.8s ease-out infinite;
 }
 
-@keyframes float {
+.social-icon-main:active {
+    transform: scale(0.95) rotate(180deg);
+}
+
+@keyframes floatGentle {
     0%, 100% {
         transform: translateY(0px);
     }
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-    50% {
-        transform: scale(1.3);
-        opacity: 0.4;
-    }
-    100% {
-        transform: scale(1.6);
-        opacity: 0;
-    }
-}
-
-@keyframes pulse-hover {
+@keyframes pulseModern {
     0% {
         transform: scale(1);
         opacity: 0.6;
     }
     50% {
-        transform: scale(1.5);
+        transform: scale(1.4);
         opacity: 0.3;
+    }
+    100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
+
+@keyframes pulseHover {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
     }
     100% {
         transform: scale(2);
@@ -1287,150 +1364,209 @@ body {
     }
 }
 
+/* Menu de Redes Sociais */
 .social-menu {
     position: absolute;
-    right: 70px;
+    right: 80px;
     top: 50%;
-    transform: translateY(-50%) translateX(20px);
+    transform: translateY(-50%) translateX(30px);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: none;
     z-index: 1;
-    padding: 5px 0;
-}
-
-/* Área de transição invisível entre botão e menu */
-.social-menu::before {
-    content: '';
-    position: absolute;
-    right: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 100%;
-    background: transparent;
+    padding: 8px 0;
 }
 
 .social-balloon:hover .social-menu,
-.social-menu:hover,
-.social-balloon:hover .social-menu::before {
+.social-menu:hover {
     opacity: 1;
     visibility: visible;
     transform: translateY(-50%) translateX(0);
     pointer-events: all;
 }
 
-.social-balloon:hover .social-item,
-.social-menu:hover .social-item {
-    animation: slideInBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    opacity: 1 !important;
-    transform: translateX(0) scale(1) !important;
+/* Área de transição invisível */
+.social-menu::before {
+    content: '';
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 100%;
+    background: transparent;
 }
 
+/* Itens de Redes Sociais */
 .social-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: var(--white);
-    padding: 12px 20px;
-    border-radius: 30px;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 14px 22px;
+    border-radius: 50px;
     text-decoration: none;
     color: var(--gray-dark);
     font-weight: 600;
-    font-size: 14px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    font-size: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     white-space: nowrap;
-    min-width: 140px;
+    min-width: 160px;
     position: relative;
     overflow: hidden;
-    transform: translateX(30px) scale(0.8);
+    transform: translateX(40px) scale(0.7);
     opacity: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.social-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s;
+.social-balloon:hover .social-item,
+.social-menu:hover .social-item {
+    animation: slideInModern 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 1;
+    transform: translateX(0) scale(1);
 }
 
-.social-item:hover::before {
-    left: 100%;
-}
-
-.social-item:hover {
-    transform: translateX(-8px) scale(1.05);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+.social-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 }
 
 .social-item i {
-    font-size: 20px;
-    width: 24px;
-    text-align: center;
+    font-size: 18px;
+    transition: transform 0.3s ease;
 }
 
+.social-label {
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.social-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.6s, opacity 0.6s;
+}
+
+.social-item:active .social-ripple {
+    width: 200px;
+    height: 200px;
+    transform: scale(1);
+    opacity: 0;
+    transition: transform 0.6s, opacity 0.6s;
+}
+
+/* WhatsApp */
 .social-item.whatsapp {
     color: #25D366;
 }
 
-.social-item.whatsapp:hover {
-    background: #25D366;
-    color: var(--white);
-    transform: translateX(-8px) scale(1.05);
-    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
+.social-item.whatsapp .social-icon-wrapper {
+    background: rgba(37, 211, 102, 0.1);
 }
 
+.social-item.whatsapp:hover {
+    background: linear-gradient(135deg, #25D366 0%, #20BA5A 100%);
+    color: var(--white);
+    transform: translateX(-6px) scale(1.05);
+    box-shadow: 0 8px 28px rgba(37, 211, 102, 0.4),
+                0 4px 12px rgba(37, 211, 102, 0.2);
+}
+
+.social-item.whatsapp:hover .social-icon-wrapper {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.social-item.whatsapp:hover i {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* Instagram */
 .social-item.instagram {
     color: #E4405F;
+}
+
+.social-item.instagram .social-icon-wrapper {
+    background: rgba(228, 64, 95, 0.1);
 }
 
 .social-item.instagram:hover {
     background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
     color: var(--white);
-    transform: translateX(-8px) scale(1.05);
-    box-shadow: 0 8px 30px rgba(228, 64, 95, 0.4);
+    transform: translateX(-6px) scale(1.05);
+    box-shadow: 0 8px 28px rgba(228, 64, 95, 0.4),
+                0 4px 12px rgba(188, 24, 136, 0.2);
 }
 
+.social-item.instagram:hover .social-icon-wrapper {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.social-item.instagram:hover i {
+    transform: scale(1.2) rotate(-5deg);
+}
+
+/* Facebook */
 .social-item.facebook {
     color: #1877F2;
 }
 
-.social-item.facebook:hover {
-    background: #1877F2;
-    color: var(--white);
-    transform: translateX(-8px) scale(1.05);
-    box-shadow: 0 8px 30px rgba(24, 119, 242, 0.4);
+.social-item.facebook .social-icon-wrapper {
+    background: rgba(24, 119, 242, 0.1);
 }
 
-/* Animação de entrada para cada item */
+.social-item.facebook:hover {
+    background: linear-gradient(135deg, #1877F2 0%, #1565C0 100%);
+    color: var(--white);
+    transform: translateX(-6px) scale(1.05);
+    box-shadow: 0 8px 28px rgba(24, 119, 242, 0.4),
+                0 4px 12px rgba(24, 119, 242, 0.2);
+}
+
+.social-item.facebook:hover .social-icon-wrapper {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.social-item.facebook:hover i {
+    transform: scale(1.2);
+}
+
+/* Animações de entrada escalonadas */
 .social-item:nth-child(1) {
-    transition-delay: 0.1s;
+    transition-delay: 0.05s;
 }
 
 .social-item:nth-child(2) {
-    transition-delay: 0.2s;
+    transition-delay: 0.15s;
 }
 
 .social-item:nth-child(3) {
-    transition-delay: 0.3s;
+    transition-delay: 0.25s;
 }
 
-@keyframes slideInBounce {
+@keyframes slideInModern {
     0% {
         opacity: 0;
-        transform: translateX(30px) scale(0.8) rotate(-10deg);
+        transform: translateX(40px) scale(0.7) rotate(-10deg);
     }
-    50% {
-        transform: translateX(-5px) scale(1.1) rotate(5deg);
+    60% {
+        transform: translateX(-8px) scale(1.08) rotate(3deg);
     }
     100% {
         opacity: 1;
@@ -1438,49 +1574,37 @@ body {
     }
 }
 
-/* Efeito de ondas ao redor do botão */
-.social-balloon::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    border: 2px solid var(--blue-primary);
-    border-radius: 50%;
-    opacity: 0;
-    animation: ripple 2s ease-out infinite;
-    pointer-events: none;
+/* Responsividade */
+@media (max-width: 768px) {
+    .social-float {
+        bottom: 80px;
+        right: 20px;
+    }
+    
+    .social-icon-main {
+        width: 56px;
+        height: 56px;
+        font-size: 20px;
+    }
+    
+    .social-menu {
+        right: 70px;
+    }
+    
+    .social-item {
+        padding: 12px 18px;
+        font-size: 14px;
+        min-width: 140px;
+    }
+    
+    .social-icon-wrapper {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .social-item i {
+        font-size: 16px;
+    }
 }
 
-.social-balloon:hover::before {
-    animation: ripple-hover 1s ease-out infinite;
-}
-
-@keyframes ripple {
-    0% {
-        width: 60px;
-        height: 60px;
-        opacity: 0.6;
-    }
-    100% {
-        width: 120px;
-        height: 120px;
-        opacity: 0;
-    }
-}
-
-@keyframes ripple-hover {
-    0% {
-        width: 60px;
-        height: 60px;
-        opacity: 0.8;
-    }
-    100% {
-        width: 150px;
-        height: 150px;
-        opacity: 0;
-    }
-}
 

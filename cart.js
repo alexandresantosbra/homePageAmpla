@@ -1,4 +1,7 @@
 // Script para página de carrinho
+// Configure abaixo: URL do endpoint que receberá pedidos (webhook) ou email de fallback
+const ORDER_ENDPOINT = ''; // ex: 'https://meusite.com/api/orders' -> deixar vazio para usar fallback por email/clipboard
+const OWNER_EMAIL = 'verseries924@gmail.com'; // email do responsável para fallback por email
 function getCart() {
     try {
         const raw = localStorage.getItem('ampla_cart');
@@ -125,6 +128,118 @@ function renderCart() {
     updateCartCount();
 }
 
+// === Recomendações (carregar de products.json e renderizar) ===
+function loadRecommendations() {
+    fetch('products.json')
+        .then(r => r.json())
+        .then(all => {
+            try {
+                const cart = getCart();
+                const cartNames = cart.map(i => i.name);
+                const candidates = all.filter(p => !cartNames.includes(p.name));
+                // Embaralhar
+                for (let i = candidates.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+                }
+                const recs = candidates.slice(0, 4);
+                renderRecommendations(recs);
+            } catch (e) {
+                console.error('Erro ao processar recomendações', e);
+            }
+        })
+        .catch(err => {
+            // falha silenciosa
+            console.warn('Não foi possível carregar products.json', err);
+        });
+}
+
+function renderRecommendations(products) {
+    const grid = document.getElementById('recommended-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    if (!products || products.length === 0) {
+        grid.innerHTML = '<div style="color:#666">Sem recomendações no momento.</div>';
+        return;
+    }
+
+    products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card-recommend';
+        card.style.border = '1px solid #eee';
+        card.style.padding = '8px';
+        card.style.width = '220px';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.alignItems = 'stretch';
+
+        card.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" style="width:100%;height:120px;object-fit:cover;margin-bottom:8px;">
+            <div style="flex:1">
+                <div style="font-size:0.85rem;color:#666">${product.brand}</div>
+                <div style="font-weight:600;margin:6px 0">${product.name}</div>
+                <div style="color:#111">R$ ${Number(product.price).toFixed(2).replace('.', ',')}</div>
+            </div>
+        `;
+
+        const actions = document.createElement('div');
+        actions.style.display = 'flex';
+        actions.style.gap = '8px';
+        actions.style.marginTop = '8px';
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'btn-outline';
+        addBtn.innerHTML = '<i class="fas fa-shopping-cart"></i>';
+        addBtn.setAttribute('aria-label', 'Adicionar ao carrinho');
+        addBtn.title = 'Adicionar ao carrinho';
+        addBtn.addEventListener('click', function() {
+            addRecommendedToCart(product);
+        });
+
+        const detailsBtn = document.createElement('button');
+        detailsBtn.className = 'btn-primary';
+        detailsBtn.innerText = 'Comprar';
+        detailsBtn.setAttribute('aria-label', 'Comprar');
+        detailsBtn.addEventListener('click', function() {
+            // abrir produtos.html com busca pelo nome
+            const url = `produtos.html?catalogo=completo&search=${encodeURIComponent(product.name)}`;
+            window.location.href = url;
+        });
+
+        actions.appendChild(addBtn);
+        actions.appendChild(detailsBtn);
+
+        card.appendChild(actions);
+        grid.appendChild(card);
+    });
+}
+
+function addRecommendedToCart(product) {
+    try {
+        const cart = getCart();
+        const idx = cart.findIndex(i => i.name === product.name);
+        if (idx > -1) {
+            cart[idx].qty = (cart[idx].qty || 1) + 1;
+        } else {
+            cart.push({
+                name: product.name,
+                brand: product.brand,
+                price: product.price,
+                image: product.image,
+                qty: 1,
+                categoryKey: product.categoryKey || ''
+            });
+        }
+        saveCart(cart);
+        renderCart();
+        loadRecommendations();
+        if (window.showToast) showToast(`${product.name} adicionado ao carrinho.`, { success: true });
+        else console.log(`${product.name} adicionado ao carrinho.`);
+    } catch (e) {
+        console.error('Falha ao adicionar recomendado', e);
+    }
+}
+
 function clearCart() {
     if (!confirm('Deseja limpar todo o carrinho?')) return;
     saveCart([]);
@@ -138,16 +253,240 @@ function checkout() {
         else alert('Seu carrinho está vazio.');
         return;
     }
-    // Aqui você pode integrar com checkout real. Por enquanto, apenas simular.
+
     const total = cart.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
-    if (window.showToast) showToast(`Total da compra: R$ ${total.toFixed(2).replace('.', ',')}`, { success: true });
-    else alert(`Total da compra: R$ ${total.toFixed(2).replace('.', ',')}\n\nObrigado! Em breve entraremos em contato.`);
-    saveCart([]);
-    renderCart();
+
+    const payload = {
+        createdAt: new Date().toISOString(),
+        site: window.location.hostname || window.location.href,
+        total: Number(total.toFixed(2)),
+        items: cart.map(i => ({ name: i.name, brand: i.brand, price: i.price, qty: i.qty, categoryKey: i.categoryKey || '' }))
+    };
+
+    const json = JSON.stringify(payload, null, 2);
+
+    // Se houver endpoint configurado, enviar via POST
+    if (ORDER_ENDPOINT && ORDER_ENDPOINT.trim() !== '') {
+        fetch(ORDER_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then(resp => {
+            if (!resp.ok) throw new Error('Erro ao enviar pedido');
+            return resp.json().catch(() => null);
+        }).then(() => {
+            if (window.showToast) showToast(`Pedido enviado com sucesso! Total: R$ ${total.toFixed(2).replace('.', ',')}`, { success: true });
+            else alert(`Pedido enviado com sucesso! Total: R$ ${total.toFixed(2).replace('.', ',')}`);
+            saveCart([]);
+            renderCart();
+        }).catch(err => {
+            console.error('Envio de pedido falhou', err);
+            if (confirm('Falha ao enviar pedido ao servidor. Deseja copiar o JSON para a área de transferência?')) {
+                if (navigator.clipboard) navigator.clipboard.writeText(json);
+                if (window.showToast) showToast('JSON copiado para a área de transferência.', { info: true });
+            } else {
+                if (window.showToast) showToast('Pedido não enviado.', { error: true });
+            }
+        });
+        return;
+    }
+
+    // Fallback: abrir cliente de email com JSON no corpo caso OWNER_EMAIL esteja definido
+    if (OWNER_EMAIL && OWNER_EMAIL.includes('@')) {
+        const subject = `Novo pedido - ${new Date().toLocaleString()}`;
+        const mailto = `mailto:${OWNER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(json)}`;
+        window.location.href = mailto;
+        if (window.showToast) showToast('Abrindo cliente de email. Revise e envie o pedido.', { info: true });
+        return;
+    }
+
+    // Último recurso: copiar JSON para área de transferência
+    if (confirm('Nenhum endpoint configurado. Deseja copiar o JSON do pedido para a área de transferência?')) {
+        if (navigator.clipboard) navigator.clipboard.writeText(json).then(() => {
+            if (window.showToast) showToast('JSON copiado para a área de transferência.', { success: true });
+        });
+    }
+}
+
+// START: integração de pagamento (chama nosso servidor local /create-payment)
+async function startCheckoutPayment(payer) {
+    const cart = getCart();
+    if (!cart || cart.length === 0) {
+        if (window.showToast) showToast('Seu carrinho está vazio.', { error: true });
+        else alert('Seu carrinho está vazio.');
+        return;
+    }
+    const total = cart.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+
+    const payload = {
+        transaction_amount: Number(total.toFixed(2)),
+        description: 'Compra Ampla - ' + (cart.length) + ' itens',
+        payment_method_id: 'pix',
+        payer: payer || { email: '', first_name: '', last_name: '', identification: { type: 'CPF', number: '' } },
+        expiration: 3600
+    };
+
+    // chamar nosso servidor
+    try {
+        const resp = await fetch('http://localhost:3000/create-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!resp.ok) throw new Error('Falha ao criar pagamento');
+        const data = await resp.json();
+
+        // Mostrar modal simples com QR e código
+        showPaymentModal(data);
+
+        // iniciar polling para status
+        pollPaymentStatus(data.id, 15, 4000);
+    } catch (e) {
+        console.error(e);
+        if (window.showToast) showToast('Falha ao iniciar pagamento.', { error: true });
+        else alert('Falha ao iniciar pagamento.');
+    }
+}
+
+function showPaymentModal(data) {
+    // criar modal simples
+    let modal = document.getElementById('payment-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'payment-modal';
+        modal.style.position = 'fixed';
+        modal.style.left = '0';
+        modal.style.top = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        modal.style.background = 'rgba(0,0,0,0.4)';
+        modal.innerHTML = `<div id="payment-modal-card" style="background:#fff;padding:20px;border-radius:8px;max-width:420px;width:95%">
+            <h3>Finalize o pagamento (PIX)</h3>
+            <div id="payment-qr" style="text-align:center;margin:10px 0"></div>
+            <div id="payment-code" style="word-break:break-all;background:#f6f6f6;padding:8px;border-radius:6px;margin-top:8px;font-family:monospace;margin-bottom:12px;"></div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;"><button id="copy-pix-code" class="btn-primary" style="margin-right:auto;">Copiar Chave PIX</button><button id="close-payment-modal" class="btn-outline">Fechar</button></div>
+        </div>`;
+        document.body.appendChild(modal);
+        document.getElementById('close-payment-modal').addEventListener('click', () => { modal.remove(); });
+    }
+
+    const qrContainer = document.getElementById('payment-qr');
+    const codeContainer = document.getElementById('payment-code');
+    qrContainer.innerHTML = '';
+    if (data.qr_code_base64) {
+        const img = document.createElement('img');
+        img.src = 'data:image/png;base64,' + data.qr_code_base64;
+        img.style.maxWidth = '100%';
+        qrContainer.appendChild(img);
+    } else {
+        qrContainer.innerText = 'QR indisponível';
+    }
+    codeContainer.innerText = data.qr_code || '';
+    
+    // Botão para copiar chave PIX
+    const copyBtn = document.getElementById('copy-pix-code');
+    if (copyBtn && data.qr_code) {
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(data.qr_code).then(() => {
+                const originalText = copyBtn.innerText;
+                copyBtn.innerText = '✓ Copiado!';
+                setTimeout(() => { copyBtn.innerText = originalText; }, 2000);
+            }).catch(err => {
+                alert('Falha ao copiar: ' + err);
+            });
+        });
+    }
+}
+
+function pollPaymentStatus(id, attempts = 20, interval = 5000) {
+    let tries = 0;
+    const t = setInterval(async () => {
+        tries++;
+        try {
+            const r = await fetch(`http://localhost:3000/payment-status/${encodeURIComponent(id)}`);
+            if (!r.ok) throw new Error('Status error');
+            const s = await r.json();
+            if (s.status === 'paid' || s.status === 'approved') {
+                clearInterval(t);
+                // remover modal e redirecionar para sucesso
+                document.getElementById('payment-modal')?.remove();
+                window.location.href = 'payment_success.html?id=' + encodeURIComponent(id);
+            }
+        } catch (e) {
+            console.warn('poll error', e);
+        }
+        if (tries >= attempts) clearInterval(t);
+    }, interval);
+}
+// END: integração de pagamento
+
+if (typeof window !== 'undefined') {
+    window.startCheckoutPayment = startCheckoutPayment;
+    window.showPaymentModal = showPaymentModal;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     renderCart();
+    // carregar recomendações após render do carrinho
+    loadRecommendations();
     document.getElementById('clear-cart')?.addEventListener('click', clearCart);
     document.getElementById('checkout')?.addEventListener('click', checkout);
+    // botão visível para iniciar PIX
+    document.getElementById('pix-checkout')?.addEventListener('click', function() {
+        const modal = document.getElementById('pix-payment-modal');
+        if (modal) modal.style.display = 'flex';
+    });
+
+    // cancelar modal
+    document.getElementById('pix-payment-cancel')?.addEventListener('click', function() {
+        const modal = document.getElementById('pix-payment-modal');
+        if (modal) modal.style.display = 'none';
+    });
+
+    // submit do formulário de pagamento
+    document.getElementById('pix-payment-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const payer = {
+            email: document.getElementById('payer-email')?.value || '',
+            first_name: document.getElementById('payer-first')?.value || '',
+            last_name: document.getElementById('payer-last')?.value || '',
+            identification: { type: 'CPF', number: (document.getElementById('payer-cpf')?.value || '').replace(/\D/g,'') }
+        };
+        // fechar modal e iniciar pagamento
+        const modal = document.getElementById('pix-payment-modal');
+        if (modal) modal.style.display = 'none';
+        startCheckoutPayment(payer);
+    });
+
+    // Se a URL tiver ?autocheckout=1, tentar finalizar automaticamente
+    try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('autocheckout') === '1') {
+            // aguardar renderização curta antes de chamar checkout
+            setTimeout(() => {
+                checkout();
+            }, 400);
+        }
+    } catch (e) {
+        // ignore
+    }
+    // Mostrar notificação se um produto foi salvo e passado via query param ?saved=
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const saved = params.get('saved');
+        if (saved) {
+            const name = decodeURIComponent(saved);
+            if (window.showToast) showToast(`${name} salvo nos produtos.`, { success: true });
+            else alert(`${name} salvo nos produtos.`);
+            // remover param da URL sem recarregar
+            params.delete('saved');
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    } catch (e) {
+        // ignore
+    }
 });

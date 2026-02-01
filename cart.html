@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="cart-page">
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -21,15 +21,21 @@
                     </a>
                 </div>
                 <nav class="nav">
+                    <a href="index.html">Home</a>
                     <a href="index.html#sobre">Sobre Nós</a>
                     <a href="index.html#produtos">Produtos</a>
                     <a href="index.html#servicos">Serviços</a>
-                    <a href="index.html#blog">Blog</a>
                 </nav>
-                <a href="cart.html" class="cart-link header-cart" title="Carrinho">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count">0</span>
-                </a>
+                <div class="header-actions">
+                    <a href="favoritos.html" class="cart-link header-favorites" title="Favoritos">
+                        <i class="fas fa-heart"></i>
+                        <span id="favorites-count">0</span>
+                    </a>
+                    <a href="cart.html" class="cart-link header-cart" title="Carrinho">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count">0</span>
+                    </a>
+                </div>
                 <button class="btn-primary btn-header">Solicitar Orçamento</button>
             </div>
         </div>
@@ -39,7 +45,7 @@
         <h1>Seu Carrinho</h1>
         <div id="cart-empty" style="display:none; margin-top:1rem;">
             <p>Seu carrinho está vazio.</p>
-            <a href="produtos.html?catalogo=completo" class="btn-primary">Ver Produtos</a>
+            <a href="produtos.html?catalogo=completo" class="btn-primary">Comprar Agora</a>
         </div>
 
         <div id="cart-area" style="margin-top:1rem; display:none;">
@@ -51,7 +57,35 @@
                 <div>
                     <strong>Total: </strong> <span id="cart-total">R$ 0,00</span>
                     <button id="checkout" class="btn-primary" style="margin-left:12px;">Finalizar Compra</button>
+                    <button id="pix-checkout" class="btn-primary" style="margin-left:12px;">Pagar com PIX</button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Seção de recomendados -->
+        <section id="recommended-section" style="margin-top:2rem;">
+            <h2>Recomendados para você</h2>
+            <div id="recommended-grid" class="products-grid" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;"></div>
+        </section>
+
+        <!-- Modal de pagamento (formulário do pagador) -->
+        <div id="pix-payment-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;z-index:2000;">
+            <div style="background:#fff;padding:18px;border-radius:10px;max-width:480px;width:96%;">
+                <h3 style="margin-bottom:8px;">Dados do Pagador (PIX)</h3>
+                <form id="pix-payment-form">
+                    <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:8px;">
+                        <input id="payer-first" placeholder="Nome" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
+                        <input id="payer-last" placeholder="Sobrenome" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
+                    </div>
+                    <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:8px;">
+                        <input id="payer-email" type="email" placeholder="Email" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
+                        <input id="payer-cpf" placeholder="CPF (somente números)" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">
+                        <button type="button" id="pix-payment-cancel" class="btn-outline">Cancelar</button>
+                        <button type="submit" class="btn-primary">Pagar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </main>

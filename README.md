@@ -62,6 +62,27 @@ Para personalizar a homepage:
 3. **Imagens**: Substitua as URLs do Unsplash pelas suas próprias imagens
 4. **Formulário**: Configure o endpoint de envio no arquivo `script.js`
 
+## 🛒 Envio de Pedidos (Checkout)
+
+O projeto inclui um carrinho de compras (`cart.js`) que salva itens em `localStorage` e uma função de `checkout()` que gera um JSON com o pedido.
+
+- Configurações em `cart.js`:
+  - `ORDER_ENDPOINT` — URL do webhook/endpoint que receberá o pedido via `POST` com `Content-Type: application/json`. Exemplo: `https://meusite.com/api/orders`. Deixe vazio para usar fallback por email.
+  - `OWNER_EMAIL` — email do responsável que será usado para abrir o cliente de email (`mailto:`) com o JSON do pedido no corpo.
+
+- Comportamento:
+  - Se `ORDER_ENDPOINT` estiver definido, o site envia um `POST` com o payload JSON `{ createdAt, site, total, items }`.
+  - Em caso de falha no envio, o usuário pode copiar o JSON para a área de transferência.
+  - Se `ORDER_ENDPOINT` estiver vazio e `OWNER_EMAIL` definido, o cliente de email é aberto com o JSON no corpo.
+  - Se nenhum dos dois estiver configurado, o site oferece copiar o JSON para o clipboard.
+
+- Testes rápidos:
+  1. Adicione itens ao carrinho na interface.
+  2. Defina `ORDER_ENDPOINT` em `cart.js` apontando para um servidor de desenvolvimento (ex.: `https://webhook.site/xxxx`).
+  3. Clique em `Finalizar` e verifique o recebimento do JSON no endpoint.
+
+Se quiser, eu configuro um webhook de exemplo (usando `webhook.site`) e atualizo `cart.js` com o endpoint temporário para testes.
+
 ---
 
 Desenvolvido com ❤️ para Ampla
