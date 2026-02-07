@@ -33,12 +33,17 @@ function renderCart() {
     const cartEmpty = document.getElementById('cart-empty');
     const itemsContainer = document.getElementById('cart-items');
     const totalEl = document.getElementById('cart-total');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const itemCountEl = document.getElementById('item-count');
 
     if (!itemsContainer || !cartArea || !cartEmpty || !totalEl) return;
 
     if (!cart || cart.length === 0) {
         cartArea.style.display = 'none';
-        cartEmpty.style.display = 'block';
+        cartEmpty.style.display = 'flex';
+        cartEmpty.style.flexDirection = 'column';
+        cartEmpty.style.alignItems = 'center';
+        cartEmpty.style.justifyContent = 'center';
         totalEl.textContent = 'R$ 0,00';
         updateCartCount();
         return;
@@ -50,48 +55,41 @@ function renderCart() {
     itemsContainer.innerHTML = '';
 
     let total = 0;
+    let totalItems = 0;
 
     cart.forEach((item, index) => {
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
-        itemEl.style.display = 'flex';
-        itemEl.style.alignItems = 'center';
-        itemEl.style.justifyContent = 'space-between';
-        itemEl.style.padding = '12px 0';
-        itemEl.style.borderBottom = '1px solid #eee';
 
-        const left = document.createElement('div');
-        left.style.display = 'flex';
-        left.style.alignItems = 'center';
+        const itemQty = item.qty || 1;
+        totalItems += itemQty;
+        const itemTotal = (item.price || 0) * itemQty;
+        total += itemTotal;
 
         const img = document.createElement('img');
+        img.className = 'cart-item-image';
         img.src = item.image || '';
         img.alt = item.name;
-        img.style.width = '80px';
-        img.style.height = '60px';
-        img.style.objectFit = 'cover';
-        img.style.marginRight = '12px';
 
         const info = document.createElement('div');
-        info.innerHTML = `<strong>${item.name}</strong><div style="font-size:0.9rem;color:#666">${item.brand || ''}</div>`;
-
-        left.appendChild(img);
-        left.appendChild(info);
-
-        const right = document.createElement('div');
-        right.style.display = 'flex';
-        right.style.alignItems = 'center';
+        info.className = 'cart-item-info';
+        info.innerHTML = `
+            <h3>${item.name}</h3>
+            <p class="cart-item-brand">${item.brand || 'Sem marca'}</p>
+        `;
 
         const price = document.createElement('div');
-        price.style.marginRight = '12px';
+        price.className = 'cart-item-price';
         price.innerText = `R$ ${Number(item.price).toFixed(2).replace('.', ',')}`;
 
+        const controls = document.createElement('div');
+        controls.className = 'cart-item-controls';
+
         const qtyInput = document.createElement('input');
+        qtyInput.className = 'quantity-input';
         qtyInput.type = 'number';
         qtyInput.min = '1';
-        qtyInput.value = item.qty || 1;
-        qtyInput.style.width = '64px';
-        qtyInput.style.marginRight = '12px';
+        qtyInput.value = itemQty;
         qtyInput.addEventListener('change', function() {
             const v = parseInt(this.value, 10);
             if (isNaN(v) || v < 1) {
@@ -104,27 +102,28 @@ function renderCart() {
         });
 
         const removeBtn = document.createElement('button');
-        removeBtn.className = 'btn-outline';
-        removeBtn.innerText = 'Remover';
+        removeBtn.className = 'btn-remove';
+        removeBtn.innerHTML = '<i class="fas fa-trash"></i> Remover';
         removeBtn.addEventListener('click', function() {
             cart.splice(index, 1);
             saveCart(cart);
             renderCart();
         });
 
-        right.appendChild(price);
-        right.appendChild(qtyInput);
-        right.appendChild(removeBtn);
+        controls.appendChild(qtyInput);
+        controls.appendChild(removeBtn);
 
-        itemEl.appendChild(left);
-        itemEl.appendChild(right);
+        itemEl.appendChild(img);
+        itemEl.appendChild(info);
+        itemEl.appendChild(price);
+        itemEl.appendChild(controls);
 
         itemsContainer.appendChild(itemEl);
-
-        total += (item.price || 0) * (item.qty || 1);
     });
 
+    if (subtotalEl) subtotalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
     totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    if (itemCountEl) itemCountEl.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
     updateCartCount();
 }
 
@@ -159,55 +158,45 @@ function renderRecommendations(products) {
     if (!grid) return;
     grid.innerHTML = '';
     if (!products || products.length === 0) {
-        grid.innerHTML = '<div style="color:#666">Sem recomendações no momento.</div>';
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--gray-medium);">Sem recomendações no momento.</div>';
         return;
     }
 
     products.forEach(product => {
         const card = document.createElement('div');
         card.className = 'product-card-recommend';
-        card.style.border = '1px solid #eee';
-        card.style.padding = '8px';
-        card.style.width = '220px';
-        card.style.display = 'flex';
-        card.style.flexDirection = 'column';
-        card.style.alignItems = 'stretch';
 
         card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" style="width:100%;height:120px;object-fit:cover;margin-bottom:8px;">
-            <div style="flex:1">
-                <div style="font-size:0.85rem;color:#666">${product.brand}</div>
-                <div style="font-weight:600;margin:6px 0">${product.name}</div>
-                <div style="color:#111">R$ ${Number(product.price).toFixed(2).replace('.', ',')}</div>
-            </div>
+            <img src="${product.image}" alt="${product.name}">
+            <div class="product-brand">${product.brand || 'Sem marca'}</div>
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">R$ ${Number(product.price).toFixed(2).replace('.', ',')}</div>
         `;
 
         const actions = document.createElement('div');
-        actions.style.display = 'flex';
-        actions.style.gap = '8px';
-        actions.style.marginTop = '8px';
+        actions.className = 'recommend-actions';
 
         const addBtn = document.createElement('button');
         addBtn.className = 'btn-outline';
-        addBtn.innerHTML = '<i class="fas fa-shopping-cart"></i>';
+        addBtn.innerHTML = '<i class="fas fa-plus"></i>';
         addBtn.setAttribute('aria-label', 'Adicionar ao carrinho');
         addBtn.title = 'Adicionar ao carrinho';
-        addBtn.addEventListener('click', function() {
+        addBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             addRecommendedToCart(product);
         });
 
-        const detailsBtn = document.createElement('button');
-        detailsBtn.className = 'btn-primary';
-        detailsBtn.innerText = 'Comprar';
-        detailsBtn.setAttribute('aria-label', 'Comprar');
-        detailsBtn.addEventListener('click', function() {
-            // abrir produtos.html com busca pelo nome
-            const url = `produtos.html?catalogo=completo&search=${encodeURIComponent(product.name)}`;
-            window.location.href = url;
+        const buyBtn = document.createElement('button');
+        buyBtn.className = 'btn-primary';
+        buyBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Comprar';
+        buyBtn.setAttribute('aria-label', 'Comprar');
+        buyBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            addRecommendedToCart(product);
         });
 
         actions.appendChild(addBtn);
-        actions.appendChild(detailsBtn);
+        actions.appendChild(buyBtn);
 
         card.appendChild(actions);
         grid.appendChild(card);

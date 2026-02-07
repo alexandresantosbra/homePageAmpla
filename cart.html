@@ -41,49 +41,101 @@
         </div>
     </header>
 
-    <main class="container" style="padding: 2rem 1rem;">
-        <h1>Seu Carrinho</h1>
-        <div id="cart-empty" style="display:none; margin-top:1rem;">
-            <p>Seu carrinho está vazio.</p>
-            <a href="produtos.html?catalogo=completo" class="btn-primary">Comprar Agora</a>
-        </div>
+    <main>
+        <div class="cart-container">
+            <div class="cart-header">
+                <h1>Seu Carrinho de Compras</h1>
+                <p class="cart-header-subtitle">Revise seus itens antes de finalizar</p>
+            </div>
 
-        <div id="cart-area" style="margin-top:1rem; display:none;">
-            <div id="cart-items"></div>
-            <div id="cart-summary" style="margin-top:1rem; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <button id="clear-cart" class="btn-outline">Limpar Carrinho</button>
+            <div id="cart-empty" class="cart-empty-state" style="display:none;">
+                <div class="empty-illustration">
+                    <i class="fas fa-shopping-cart"></i>
                 </div>
-                <div>
-                    <strong>Total: </strong> <span id="cart-total">R$ 0,00</span>
-                    <button id="checkout" class="btn-primary" style="margin-left:12px;">Finalizar Compra</button>
-                    <button id="pix-checkout" class="btn-primary" style="margin-left:12px;">Pagar com PIX</button>
+                <h2>Seu carrinho está vazio</h2>
+                <p>Comece a adicionar produtos para sua compra</p>
+                <a href="produtos.html?catalogo=completo" class="btn-primary">Explorar Produtos</a>
+            </div>
+
+            <div id="cart-area" class="cart-main" style="display:none;">
+                <div class="cart-content">
+                    <div class="cart-items-section">
+                        <div class="section-header">
+                            <h2>Itens Selecionados</h2>
+                            <span class="item-count" id="item-count">0 itens</span>
+                        </div>
+                        <div id="cart-items" class="cart-items-list"></div>
+                    </div>
+
+                    <aside class="cart-sidebar">
+                        <div class="cart-summary-card">
+                            <h3>Resumo do Pedido</h3>
+
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="cart-subtotal">R$ 0,00</span>
+                            </div>
+
+                            <div class="summary-row">
+                                <span>Frete</span>
+                                <span class="freight-free">Grátis</span>
+                            </div>
+
+                            <div class="summary-divider"></div>
+
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span id="cart-total">R$ 0,00</span>
+                            </div>
+
+                            <div class="checkout-buttons">
+                                <button id="checkout" class="btn-primary btn-full">
+                                    <i class="fas fa-check-circle"></i> Finalizar Compra
+                                </button>
+                                <button id="pix-checkout" class="btn-secondary btn-full">
+                                    <i class="fas fa-mobile-alt"></i> Pagar com PIX
+                                </button>
+                                <button id="clear-cart" class="btn-outline btn-full">
+                                    <i class="fas fa-trash"></i> Limpar Carrinho
+                                </button>
+                            </div>
+
+                            <a href="produtos.html?catalogo=completo" class="continue-shopping">
+                                <i class="fas fa-arrow-left"></i> Continuar Comprando
+                            </a>
+                        </div>
+                    </aside>
                 </div>
             </div>
-        </div>
-        
-        <!-- Seção de recomendados -->
-        <section id="recommended-section" style="margin-top:2rem;">
-            <h2>Recomendados para você</h2>
-            <div id="recommended-grid" class="products-grid" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;"></div>
-        </section>
 
-        <!-- Modal de pagamento (formulário do pagador) -->
-        <div id="pix-payment-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;z-index:2000;">
-            <div style="background:#fff;padding:18px;border-radius:10px;max-width:480px;width:96%;">
-                <h3 style="margin-bottom:8px;">Dados do Pagador (PIX)</h3>
-                <form id="pix-payment-form">
-                    <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:8px;">
-                        <input id="payer-first" placeholder="Nome" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
-                        <input id="payer-last" placeholder="Sobrenome" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
+            <section id="recommended-section" class="recommended-section" style="margin-top:3rem;">
+                <div class="section-header">
+                    <h2>Produtos Complementares</h2>
+                    <p>Você também pode gostar destes itens</p>
+                </div>
+                <div id="recommended-grid" class="recommended-grid"></div>
+            </section>
+        </div>
+
+        <div id="pix-payment-modal" class="pix-modal" style="display:none;">
+            <div class="pix-modal-overlay"></div>
+            <div class="pix-modal-content">
+                <button class="pix-modal-close" onclick="document.getElementById('pix-payment-modal').style.display='none';">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h3>Dados do Pagador</h3>
+                <form id="pix-payment-form" class="pix-form">
+                    <div class="form-row">
+                        <input id="payer-first" placeholder="Nome" required />
+                        <input id="payer-last" placeholder="Sobrenome" required />
                     </div>
-                    <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:8px;">
-                        <input id="payer-email" type="email" placeholder="Email" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
-                        <input id="payer-cpf" placeholder="CPF (somente números)" required style="padding:8px;border:1px solid #ddd;border-radius:6px;" />
+                    <div class="form-row">
+                        <input id="payer-email" type="email" placeholder="Email" required />
+                        <input id="payer-cpf" placeholder="CPF (somente números)" required />
                     </div>
-                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">
+                    <div class="form-actions">
                         <button type="button" id="pix-payment-cancel" class="btn-outline">Cancelar</button>
-                        <button type="submit" class="btn-primary">Pagar</button>
+                        <button type="submit" class="btn-primary">Confirmar Pagamento</button>
                     </div>
                 </form>
             </div>
